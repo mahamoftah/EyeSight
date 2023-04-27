@@ -59,4 +59,3 @@ urllib3==1.26.15
 virtualenv==20.22.0
 wget==3.2
 yolo==0.3.1
-pygobject==3.44.1
