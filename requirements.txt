@@ -39,7 +39,7 @@ decorator==5.1.1
 deepface==0.0.79
 defusedxml==0.7.1
 distlib==0.3.6
-Django==4.2
+Django==3.2.18
 docker==6.0.1
 docutils==0.16
 entrypoints==0.4
