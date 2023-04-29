@@ -14,20 +14,6 @@ computerVision = ComputerVisionClient(endpoint, CognitiveServicesCredentials(key
 BlindEyeSight = Flask(__name__)
 
 
-def ttsByPYTTSX3(text):
-    speech = pyttsx3.init()
-    speech.setProperty('rate', 115)
-    speech.say(text)
-    speech.runAndWait()
-
-
-def ttsByGTTS(txt):
-    speech = gtts.gTTS(txt, lang="ar")
-    speech.save("audio.mp3")
-    playsound("audio.mp3")
-    os.remove("audio.mp3")
-
-
 @BlindEyeSight.route("/describe-image")
 def imageDescription():
     text = "It's "
@@ -35,7 +21,6 @@ def imageDescription():
     desc = computerVision.describe_image(image)
     for caption in desc.captions:
         text = text + caption.text
-    ttsByPYTTSX3(text)
     return text
 
 
@@ -56,8 +41,7 @@ def ocr():
         time.sleep(1)
     for results in ocr_result.analyze_result.read_results:
         for result in results.lines:
-            text = text + result.text
-    ttsByPYTTSX3(text)
+            text = text + result.text + "\n"
     return text
 
 
@@ -79,7 +63,6 @@ def objectDetection():
     for key in numOfDuplicates:
         text = text + " " + str(numOfDuplicates[key]) + " " + key + ", "
     text = text + "in front of you"
-    ttsByPYTTSX3(text)
     return text
 
 
@@ -94,7 +77,6 @@ def landmarksDetection():
         text = text + "There are landmarks of "
     for landmark in range(len(landmark_detect.result['landmarks'])):
         text = text + landmark_detect.result['landmarks'][landmark]['name'] + ", "
-    ttsByPYTTSX3(text)
     return text
 
 
@@ -119,7 +101,6 @@ def currencyDetection():
                 text = text + model.names[int(label)] + " pound, "
             else:
                 text = text + model.names[int(label)] + " pounds, "
-    ttsByPYTTSX3(text)
     return text
 
 
