@@ -3,6 +3,7 @@ import time
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from msrest.authentication import CognitiveServicesCredentials
 from ultralytics import YOLO
+from google.cloud import vision
 from flask import Flask
 
 key = "078e943cda2145bf9866e5fe8668faa6"
