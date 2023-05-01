@@ -8,6 +8,7 @@ from flask import Flask
 
 key = "078e943cda2145bf9866e5fe8668faa6"
 endpoint = "https://other-apis.cognitiveservices.azure.com/"
+computerVision = ComputerVisionClient(endpoint, CognitiveServicesCredentials(key))
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'graduation-project-379520-244a3ffc507c.json'
 client = vision.ImageAnnotatorClient()
 image = vision.Image()
