@@ -1,8 +1,5 @@
 import os
 import time
-import gtts
-from playsound import playsound
-import pyttsx3
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from msrest.authentication import CognitiveServicesCredentials
 from ultralytics import YOLO
@@ -10,11 +7,13 @@ from flask import Flask
 
 key = "078e943cda2145bf9866e5fe8668faa6"
 endpoint = "https://other-apis.cognitiveservices.azure.com/"
-computerVision = ComputerVisionClient(endpoint, CognitiveServicesCredentials(key))
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'graduation-project-379520-244a3ffc507c.json'
+client = vision.ImageAnnotatorClient()
+image = vision.Image()
 BlindEyeSight = Flask(__name__)
 
 
-@BlindEyeSight.route("/describe-image")
+@BlindEyeSight.route("/image-description")
 def imageDescription():
     text = "It's "
     image = "https://www.jll.pt/images/people/people-photography/privacy-in-the-open-plan-office.jpg"
@@ -45,7 +44,7 @@ def ocr():
     return text
 
 
-@BlindEyeSight.route("/detect-object")
+@BlindEyeSight.route("/object-detection")
 def objectDetection():
     image_url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQv66NLKmCn3T5DV6uT0_1Hm1F1OIao6mVGNA&usqp=CAU"
     text = ""
@@ -66,44 +65,72 @@ def objectDetection():
     return text
 
 
-@BlindEyeSight.route("/detect-landmark")
-def landmarksDetection():
+@BlindEyeSight.route("/landmark-detection")
+def landmarkDetection():
     text = ""
-    image_url = "https://assets.traveltriangle.com/blog/wp-content/uploads/2019/02/Great-Sphinx-Of-Giza-Trivia.jpg"
-    landmark_detect = computerVision.analyze_image_by_domain("Landmarks", image_url)
-    if len(landmark_detect.result['landmarks']) == 1:
-        text = text + "There is a landmark of "
+    image.source.image_uri = 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/15/4f/38/f4/caption.jpg?w=1200&h=-1&s=1'
+    response = client.landmark_detection(image=image)
+    landmarks = response.landmark_annotations
+    if len(landmarks) == 1:
+        text = "Landmark is "
+    elif len(landmarks) == 1:
+        text = "Try again."
+        return text
     else:
-        text = text + "There are landmarks of "
-    for landmark in range(len(landmark_detect.result['landmarks'])):
-        text = text + landmark_detect.result['landmarks'][landmark]['name'] + ", "
+        text = "Landmarks are "
+    for landmark in landmarks:
+        text += landmark.description + ", "
     return text
 
 
-@BlindEyeSight.route("/detect-currency")
+@BlindEyeSight.route("/currency-detection")
 def currencyDetection():
     text = ""
     model = YOLO("best.pt")
-    results = model('Currency-Detection-1/test/images/IMG_20230220_231743_jpg.rf.0d378477fbf3a09d479ef841ed8c8cf5.jpg')
-    print(results)
-    print("-----------------------------------------------------------------------------------------------")
+    results = model('C:/Users/maham/Pictures/Camera Roll/WIN_20230427_09_23_43_Pro.jpg')
     for result in results:
-        print(result)
-        print("-----------------------------------------------------------------------------------------------")
-        print(result.boxes)
-        print("-----------------------------------------------------------------------------------------------")
-        print(result.boxes.cls)
-        print("-----------------------------------------------------------------------------------------------")
-        for label in result.boxes.cls:
-            print(label)
-            print("-----------------------------------------------------------------------------------------------")
-            if model.names[int(label)] == 1:
+       for label in result.boxes.cls:
+           if model.names[int(label)] == 1:
                 text = text + model.names[int(label)] + " pound, "
-            else:
+           else:
                 text = text + model.names[int(label)] + " pounds, "
+    return text
+
+
+@BlindEyeSight.route('/face-detection')
+def faceDetection():
+    text = ""
+    anger = 0
+    joy = 0
+    superise = 0
+    sorrow = 0
+    response = client.face_detection(image=image)
+    faces = response.face_annotations
+    likelihood_name = ('UNKNOWN', 'VERY_UNLIKELY', 'UNLIKELY', 'POSSIBLE',
+                       'LIKELY', 'VERY_LIKELY')
+
+    if len(faces) == 1:
+        text += "There is one person, "
+    else:
+        text = text + "There are " + str(len(faces)) + " persons. "
+
+    for face in faces:
+        if likelihood_name[face.anger_likelihood] == 'VERY_LIKELY' or likelihood_name[
+            face.anger_likelihood] == 'LIKELY':
+            anger += 1
+        if likelihood_name[face.joy_likelihood] == 'VERY_LIKELY' or likelihood_name[face.joy_likelihood] == 'LIKELY':
+            joy += 1
+        if likelihood_name[face.surprise_likelihood] == 'VERY_LIKELY' or likelihood_name[face.surprise_likelihood] == 'LIKELY':
+            superise += 1
+        if likelihood_name[face.sorrow_likelihood] == 'VERY_LIKELY' or likelihood_name[face.sorrow_likelihood] == 'LIKELY':
+            sorrow += 1
+
+    text += "" if anger == 0 else str(anger) + " are angery, "
+    text += "" if joy == 0 else str(joy) + " are happy, "
+    text += "" if superise == 0 else str(superise) + " are surprised, "
+    text += "" if sorrow == 0 else str(sorrow) + " are sad, "
     return text
 
 
 if __name__ == "__main__":
     BlindEyeSight.run(debug=True)
-
