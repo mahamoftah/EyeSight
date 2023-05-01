@@ -89,7 +89,7 @@ def landmarkDetection():
 def currencyDetection():
     text = ""
     model = YOLO("best.pt")
-    results = model('C:/Users/maham/Pictures/Camera Roll/WIN_20230427_09_23_43_Pro.jpg')
+    results = model('https://cloudfront-eu-central-1.images.arcpublishing.com/thenational/UNYSRZ52VJGC5BN2Y327UDVQVA.jpg')
     for result in results:
        for label in result.boxes.cls:
            if model.names[int(label)] == 1:
