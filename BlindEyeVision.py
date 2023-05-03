@@ -15,7 +15,7 @@ image = vision.Image()
 BlindEyeVision = Flask(__name__)
 
 
-@BlindEyeSight.route("/image-description")
+@BlindEyeVision.route("/image-description")
 def imageDescription():
     text = "It's "
     image = "https://www.jll.pt/images/people/people-photography/privacy-in-the-open-plan-office.jpg"
@@ -25,7 +25,7 @@ def imageDescription():
     return text
 
 
-@BlindEyeSight.route("/ocr")
+@BlindEyeVision.route("/ocr")
 def ocr():
     text = ""
     image_url = "https://selfpublishing.com/wp-content/uploads/2020/11/How-to-Start-Writing-a-Book-700x1024.jpg"
@@ -46,7 +46,7 @@ def ocr():
     return text
 
 
-@BlindEyeSight.route("/object-detection")
+@BlindEyeVision.route("/object-detection")
 def objectDetection():
     image_url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQv66NLKmCn3T5DV6uT0_1Hm1F1OIao6mVGNA&usqp=CAU"
     text = ""
@@ -67,7 +67,7 @@ def objectDetection():
     return text
 
 
-@BlindEyeSight.route("/landmark-detection")
+@BlindEyeVision.route("/landmark-detection")
 def landmarkDetection():
     text = ""
     image.source.image_uri = 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/15/4f/38/f4/caption.jpg?w=1200&h=-1&s=1'
@@ -85,7 +85,7 @@ def landmarkDetection():
     return text
 
 
-@BlindEyeSight.route("/currency-detection")
+@BlindEyeVision.route("/currency-detection")
 def currencyDetection():
     text = ""
     model = YOLO("best.pt")
@@ -99,7 +99,7 @@ def currencyDetection():
     return text
 
 
-@BlindEyeSight.route('/face-detection')
+@BlindEyeVision.route('/face-detection')
 def faceDetection():
     text = ""
     anger = 0
@@ -135,4 +135,4 @@ def faceDetection():
 
 
 if __name__ == "__main__":
-    BlindEyeSight.run(debug=True)
+    BlindEyeVision.run(debug=True)
