@@ -28,9 +28,9 @@ roboflow==1.0.5
 toml==0.10.2
 ultralytics==8.0.88
 virtualenv==20.22.0
+wheel==0.40.0
 wget==3.2
 yolo==0.3.1
 urllib3==1.26.11
 PyYAML==5.4
 rsa==4.7
-wheel==0.40.0
