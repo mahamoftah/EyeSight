@@ -9,7 +9,7 @@ from flask import Flask
 key = "078e943cda2145bf9866e5fe8668faa6"
 endpoint = "https://other-apis.cognitiveservices.azure.com/"
 computerVision = ComputerVisionClient(endpoint, CognitiveServicesCredentials(key))
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'https://drive.google.com/file/d/1p7rshtyVw4Aod8IRZWmbe9mTd_VQ7ptj/view?usp=share_link'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'graduation-project-379520-244a3ffc507c.json'
 client = vision.ImageAnnotatorClient()
 image = vision.Image()
 BlindEyeVision = Flask(__name__)
