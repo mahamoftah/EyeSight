@@ -133,6 +133,20 @@ def faceDetection():
     text += "" if sorrow == 0 else str(sorrow) + " are sad, "
     return text
 
+@BlindEyeVision.route('/logo-detection')
+def logoDetection():
+    text = ""
+    image.source.image_uri = "https://i.ebayimg.com/images/g/nYYAAOSwfftijJsK/s-l1600.jpg"
+    response = client.logo_detection(image=image)
+    logos = response.logo_annotations
+    if len(logos) == 1:
+        text = "Logo is "
+    elif len(logos) > 1:
+        text = "Logos are "
+    for logo in logos:
+        text += logo.description + ", "
+    return json.dumps(text)
+
 
 if __name__ == "__main__":
     BlindEyeVision.run(debug=True)
