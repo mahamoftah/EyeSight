@@ -1,5 +1,6 @@
 import os
 import time
+import json
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from msrest.authentication import CognitiveServicesCredentials
 from ultralytics import YOLO
