@@ -13,11 +13,11 @@ computerVision = ComputerVisionClient(endpoint, CognitiveServicesCredentials(key
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'graduation-project-379520-244a3ffc507c.json'
 client = vision.ImageAnnotatorClient()
 image = vision.Image()
-BlindEyeSight = Flask(__name__)
+BlindEyeVision = Flask(__name__)
 jsonResponse = {}
 
 
-@BlindEyeSight.route("/image-description")
+@BlindEyeVision.route("/image-description")
 def imageDescription():
     text = "It's "
     image = "https://www.jll.pt/images/people/people-photography/privacy-in-the-open-plan-office.jpg"
@@ -28,7 +28,7 @@ def imageDescription():
     return json.dumps(jsonResponse)
 
 
-@BlindEyeSight.route("/ocr")
+@BlindEyeVision.route("/ocr")
 def ocr():
     text = ""
     image_url = "https://selfpublishing.com/wp-content/uploads/2020/11/How-to-Start-Writing-a-Book-700x1024.jpg"
@@ -50,7 +50,7 @@ def ocr():
     return json.dumps(jsonResponse)
 
 
-@BlindEyeSight.route("/object-detection")
+@BlindEyeVision.route("/object-detection")
 def objectDetection():
     image_url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQv66NLKmCn3T5DV6uT0_1Hm1F1OIao6mVGNA&usqp=CAU"
     text = ""
@@ -72,7 +72,7 @@ def objectDetection():
     return json.dumps(jsonResponse)
 
 
-@BlindEyeSight.route("/landmark-detection")
+@BlindEyeVision.route("/landmark-detection")
 def landmarkDetection():
     text = ""
     image.source.image_uri = 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/15/4f/38/f4/caption.jpg?w=1200&h=-1&s=1'
@@ -92,7 +92,7 @@ def landmarkDetection():
     return json.dumps(jsonResponse)
 
 
-@BlindEyeSight.route("/currency-detection")
+@BlindEyeVision.route("/currency-detection")
 def currencyDetection():
     text = ""
     model = YOLO("best.pt")
@@ -107,7 +107,7 @@ def currencyDetection():
     return json.dumps(jsonResponse)
 
 
-@BlindEyeSight.route('/face-detection')
+@BlindEyeVision.route('/face-detection')
 def faceDetection():
     text = ""
     anger = 0
@@ -144,7 +144,7 @@ def faceDetection():
     return json.dumps(jsonResponse)
 
 
-@BlindEyeSight.route('/logo-detection')
+@BlindEyeVision.route('/logo-detection')
 def logoDetection():
     text = ""
     image.source.image_uri = "https://i.ebayimg.com/images/g/nYYAAOSwfftijJsK/s-l1600.jpg"
