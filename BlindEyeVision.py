@@ -1,11 +1,11 @@
+import json
 import os
 import time
-import json
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from msrest.authentication import CognitiveServicesCredentials
 from ultralytics import YOLO
-from google.cloud import vision
 from flask import Flask
+from google.cloud import vision
 
 key = "078e943cda2145bf9866e5fe8668faa6"
 endpoint = "https://other-apis.cognitiveservices.azure.com/"
@@ -13,20 +13,22 @@ computerVision = ComputerVisionClient(endpoint, CognitiveServicesCredentials(key
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'graduation-project-379520-244a3ffc507c.json'
 client = vision.ImageAnnotatorClient()
 image = vision.Image()
-BlindEyeVision = Flask(__name__)
+BlindEyeSight = Flask(__name__)
+jsonResponse = {}
 
 
-@BlindEyeVision.route("/image-description")
+@BlindEyeSight.route("/image-description")
 def imageDescription():
     text = "It's "
     image = "https://www.jll.pt/images/people/people-photography/privacy-in-the-open-plan-office.jpg"
     desc = computerVision.describe_image(image)
     for caption in desc.captions:
         text = text + caption.text
-    return text
+    jsonResponse['response'] = text
+    return json.dumps(jsonResponse)
 
 
-@BlindEyeVision.route("/ocr")
+@BlindEyeSight.route("/ocr")
 def ocr():
     text = ""
     image_url = "https://selfpublishing.com/wp-content/uploads/2020/11/How-to-Start-Writing-a-Book-700x1024.jpg"
@@ -44,10 +46,11 @@ def ocr():
     for results in ocr_result.analyze_result.read_results:
         for result in results.lines:
             text = text + result.text + "\n"
-    return text
+    jsonResponse['response'] = text
+    return json.dumps(jsonResponse)
 
 
-@BlindEyeVision.route("/object-detection")
+@BlindEyeSight.route("/object-detection")
 def objectDetection():
     image_url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQv66NLKmCn3T5DV6uT0_1Hm1F1OIao6mVGNA&usqp=CAU"
     text = ""
@@ -65,10 +68,11 @@ def objectDetection():
     for key in numOfDuplicates:
         text = text + " " + str(numOfDuplicates[key]) + " " + key + ", "
     text = text + "in front of you"
-    return text
+    jsonResponse['response'] = text
+    return json.dumps(jsonResponse)
 
 
-@BlindEyeVision.route("/landmark-detection")
+@BlindEyeSight.route("/landmark-detection")
 def landmarkDetection():
     text = ""
     image.source.image_uri = 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/15/4f/38/f4/caption.jpg?w=1200&h=-1&s=1'
@@ -76,31 +80,34 @@ def landmarkDetection():
     landmarks = response.landmark_annotations
     if len(landmarks) == 1:
         text = "Landmark is "
-    elif len(landmarks) == 1:
+    elif len(landmarks) == 0:
         text = "Try again."
+        ttsByPYTTSX3(text)
         return text
     else:
         text = "Landmarks are "
     for landmark in landmarks:
         text += landmark.description + ", "
-    return text
+    jsonResponse['response'] = text
+    return json.dumps(jsonResponse)
 
 
-@BlindEyeVision.route("/currency-detection")
+@BlindEyeSight.route("/currency-detection")
 def currencyDetection():
     text = ""
     model = YOLO("best.pt")
-    results = model('https://cloudfront-eu-central-1.images.arcpublishing.com/thenational/UNYSRZ52VJGC5BN2Y327UDVQVA.jpg')
+    results = model('C:/Users/maham/Pictures/Camera Roll/WIN_20230427_09_23_43_Pro.jpg')
     for result in results:
        for label in result.boxes.cls:
            if model.names[int(label)] == 1:
                 text = text + model.names[int(label)] + " pound, "
            else:
                 text = text + model.names[int(label)] + " pounds, "
-    return text
+    jsonResponse['response'] = text
+    return json.dumps(jsonResponse)
 
 
-@BlindEyeVision.route('/face-detection')
+@BlindEyeSight.route('/face-detection')
 def faceDetection():
     text = ""
     anger = 0
@@ -132,9 +139,12 @@ def faceDetection():
     text += "" if joy == 0 else str(joy) + " are happy, "
     text += "" if superise == 0 else str(superise) + " are surprised, "
     text += "" if sorrow == 0 else str(sorrow) + " are sad, "
-    return text
 
-@BlindEyeVision.route('/logo-detection')
+    jsonResponse['response'] = text
+    return json.dumps(jsonResponse)
+
+
+@BlindEyeSight.route('/logo-detection')
 def logoDetection():
     text = ""
     image.source.image_uri = "https://i.ebayimg.com/images/g/nYYAAOSwfftijJsK/s-l1600.jpg"
@@ -146,8 +156,9 @@ def logoDetection():
         text = "Logos are "
     for logo in logos:
         text += logo.description + ", "
-    return json.dumps(text)
+    jsonResponse['response'] = text
+    return json.dumps(jsonResponse)
 
 
 if __name__ == "__main__":
-    BlindEyeVision.run(debug=True)
+    BlindEyeSight.run(debug=True)
