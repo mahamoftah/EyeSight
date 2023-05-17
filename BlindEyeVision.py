@@ -96,7 +96,7 @@ def landmarkDetection():
 def currencyDetection():
     text = ""
     model = YOLO("best.pt")
-    results = model('C:/Users/maham/Pictures/Camera Roll/WIN_20230427_09_23_43_Pro.jpg')
+    results = model('https://thumbs.dreamstime.com/b/egyptian-ten-pound-note-indian-rupee-bank-notes-close-up-image-macro-172415226.jpg')
     for result in results:
        for label in result.boxes.cls:
            if model.names[int(label)] == 1:
@@ -114,6 +114,7 @@ def faceDetection():
     joy = 0
     superise = 0
     sorrow = 0
+    image.source.image_uri = 'https://assets.weforum.org/article/image/XaHpf_z51huQS_JPHs-jkPhBp0dLlxFJwt-sPLpGJB0.jpg'
     response = client.face_detection(image=image)
     faces = response.face_annotations
     likelihood_name = ('UNKNOWN', 'VERY_UNLIKELY', 'UNLIKELY', 'POSSIBLE',
