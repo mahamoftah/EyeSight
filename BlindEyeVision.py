@@ -19,12 +19,13 @@ jsonResponse = {}
 
 @BlindEyeVision.route("/image-description", methods=['POST'])
 def imageDescription():
-    text = "It's "
-    url = request.get_json()['url']
-    desc = computerVision.describe_image(url)
-    for caption in desc.captions:
-        text = text + caption.text
-    jsonResponse['response'] = text
+//    text = "It's "
+//    url = request.get_json()['url']
+//    desc = computerVision.describe_image(url)
+//    for caption in desc.captions:
+//        text = text + caption.text
+    print(request.get_json())
+    jsonResponse['response'] = request.get_json()
     return json.dumps(jsonResponse)
 
 
