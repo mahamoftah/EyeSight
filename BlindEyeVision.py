@@ -4,7 +4,7 @@ import time
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from msrest.authentication import CognitiveServicesCredentials
 from ultralytics import YOLO
-from flask import Flask
+from flask import Flask, request
 from google.cloud import vision
 
 key = "078e943cda2145bf9866e5fe8668faa6"
@@ -17,22 +17,22 @@ BlindEyeVision = Flask(__name__)
 jsonResponse = {}
 
 
-@BlindEyeVision.route("/image-description")
+@BlindEyeVision.route("/image-description", methods=['POST'])
 def imageDescription():
     text = "It's "
-    image = "https://www.jll.pt/images/people/people-photography/privacy-in-the-open-plan-office.jpg"
-    desc = computerVision.describe_image(image)
+    url = request.get_json()['url']
+    desc = computerVision.describe_image(url)
     for caption in desc.captions:
         text = text + caption.text
     jsonResponse['response'] = text
     return json.dumps(jsonResponse)
 
 
-@BlindEyeVision.route("/ocr")
+@BlindEyeVision.route("/ocr", methods=['POST'])
 def ocr():
     text = ""
-    image_url = "https://selfpublishing.com/wp-content/uploads/2020/11/How-to-Start-Writing-a-Book-700x1024.jpg"
-    ocr = computerVision.read(image_url, raw=True)
+    url = request.get_json()['url']
+    ocr = computerVision.read(url, raw=True)
     operation_location = ocr.headers["Operation-Location"]
 
     url_list = operation_location.split("/")
@@ -50,15 +50,15 @@ def ocr():
     return json.dumps(jsonResponse)
 
 
-@BlindEyeVision.route("/object-detection")
+@BlindEyeVision.route("/object-detection", methods=['POST'])
 def objectDetection():
-    image_url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQv66NLKmCn3T5DV6uT0_1Hm1F1OIao6mVGNA&usqp=CAU"
+    url = request.get_json()['url']
     text = ""
     objects = []
     numOfDuplicates = {}
     noDuplicatedList = set()
 
-    object_detect = computerVision.detect_objects(image_url)
+    object_detect = computerVision.detect_objects(url)
 
     for object in object_detect.objects:
         objects.append(object.object_property)
@@ -72,18 +72,18 @@ def objectDetection():
     return json.dumps(jsonResponse)
 
 
-@BlindEyeVision.route("/landmark-detection")
+@BlindEyeVision.route("/landmark-detection", methods=['POST'])
 def landmarkDetection():
     text = ""
-    image.source.image_uri = 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/15/4f/38/f4/caption.jpg?w=1200&h=-1&s=1'
+    image.source.image_uri = request.get_json()['url']
     response = client.landmark_detection(image=image)
     landmarks = response.landmark_annotations
     if len(landmarks) == 1:
         text = "Landmark is "
     elif len(landmarks) == 0:
-        text = "Try again."
-        ttsByPYTTSX3(text)
-        return text
+        text = "Try again later when landmarks are available."
+        jsonResponse['response'] = text
+        return json.dumps(jsonResponse)
     else:
         text = "Landmarks are "
     for landmark in landmarks:
@@ -92,11 +92,11 @@ def landmarkDetection():
     return json.dumps(jsonResponse)
 
 
-@BlindEyeVision.route("/currency-detection")
+@BlindEyeVision.route("/currency-detection", methods=['POST'])
 def currencyDetection():
     text = ""
     model = YOLO("best.pt")
-    results = model('https://thumbs.dreamstime.com/b/egyptian-ten-pound-note-indian-rupee-bank-notes-close-up-image-macro-172415226.jpg')
+    results = model(request.get_json()['url']);
     for result in results:
        for label in result.boxes.cls:
            if model.names[int(label)] == 1:
@@ -107,14 +107,14 @@ def currencyDetection():
     return json.dumps(jsonResponse)
 
 
-@BlindEyeVision.route('/face-detection')
+@BlindEyeVision.route('/face-detection', methods=['POST'])
 def faceDetection():
     text = ""
     anger = 0
     joy = 0
     superise = 0
     sorrow = 0
-    image.source.image_uri = 'https://assets.weforum.org/article/image/XaHpf_z51huQS_JPHs-jkPhBp0dLlxFJwt-sPLpGJB0.jpg'
+    image.source.image_uri = request.get_json()['url']
     response = client.face_detection(image=image)
     faces = response.face_annotations
     likelihood_name = ('UNKNOWN', 'VERY_UNLIKELY', 'UNLIKELY', 'POSSIBLE',
@@ -145,10 +145,10 @@ def faceDetection():
     return json.dumps(jsonResponse)
 
 
-@BlindEyeVision.route('/logo-detection')
+@BlindEyeVision.route('/logo-detection', methods=['POST'])
 def logoDetection():
     text = ""
-    image.source.image_uri = "https://i.ebayimg.com/images/g/nYYAAOSwfftijJsK/s-l1600.jpg"
+    image.source.image_uri = request.get_json()['url']
     response = client.logo_detection(image=image)
     logos = response.logo_annotations
     if len(logos) == 1:
@@ -162,4 +162,4 @@ def logoDetection():
 
 
 if __name__ == "__main__":
-    BlindEyeSight.run(debug=True)
+    BlindEyeVision.run(debug=True)
